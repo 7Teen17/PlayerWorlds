@@ -10,11 +10,12 @@ import xyz.nucleoid.fantasy.RuntimeWorldConfig;
 
 public class FantasyInitializer implements ServerLifecycleEvents.ServerStarted {
 
-    public RuntimeWorldConfig worldConfig;
+    public static RuntimeWorldConfig worldConfig;
+    public static Fantasy fantasy;
 
     @Override
     public void onServerStarted(MinecraftServer server) {
-        Fantasy fantasy = Fantasy.get(server);
+        fantasy = Fantasy.get(server);
         worldConfig = new RuntimeWorldConfig()
                 .setDimensionType(DimensionType.OVERWORLD_REGISTRY_KEY)
                 .setDifficulty(Difficulty.EASY)
