@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "playerworld",
+  "version": "${version}",
+  "name": "PlayerWorld",
+  "description": "Creates player worlds for players to own and use.",
+  "authors": [
+    "7Teen"
+  ],
+  "contact": {
+    "website": "github.com/7Teen"
+  },
+  "license": "MIT",
+  "icon": "assets/playerworld/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "client": [
+      "com.github.seventeen.playerworld.client.PlayerworldClient"
+    ],
+    "main": [
+      "com.github.seventeen.playerworld.Playerworld"
+    ]
+  },
+  "mixins": [
+    "playerworld.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.13.3",
+    "fabric": "*",
+    "minecraft": "1.18.2"
+  }
+}
