@@ -24,6 +24,8 @@ public class PlanetManager {
 
     public static class Planet {
 
+        private final List<UUID> allowedVisitors;
+        private final bool isPublic;
         private final UUID creator;
         private final String name;
         private final RuntimeWorldHandle worldHandle;
@@ -32,6 +34,8 @@ public class PlanetManager {
             this.creator = creator;
             this.name = name;
             this.worldHandle = worldHandle;
+            this.isPublic = false;
+            this.allowedVisitors = new ArrayList<>();
             planets.put(creator, this);
         }
 
@@ -42,5 +46,9 @@ public class PlanetManager {
         public RuntimeWorldHandle getWorldHandle() { return worldHandle; }
 
         public ServerWorld getWorld() { return worldHandle.asWorld(); }
+
+        public void setVisibility(bool visibility) {
+          this.isPublic = visibility;
+        }
     }
 }

@@ -13,7 +13,9 @@ import xyz.nucleoid.fantasy.RuntimeWorldHandle;
 public class PlanetCommand {
 
     public static int help(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        context.getSource().getPlayer().sendMessage(Text.of("Help Message for planet system: none yet lol"), false);
+        context.getSource().getPlayer().sendMessage(Text.of("PLANET SYSTEM"), false);
+        context.getSource().getPlayer().sendMessage(Text.of("/planet create <name>: Creates a planet with the given name."), false);
+        context.getSource().getPlayer().sendMessage(Text.of("/planet delete <name>: Deletes a planet with the given name."), false);
         return 1;
     }
 
