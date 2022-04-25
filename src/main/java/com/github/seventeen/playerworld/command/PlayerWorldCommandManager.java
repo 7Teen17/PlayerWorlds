@@ -34,6 +34,11 @@ public class PlayerWorldCommandManager {
 
             LiteralCommandNode<ServerCommandSource> planetDeleteNode = CommandManager
                     .literal("delete")
+                    //.executes(PlanetCommand::delete)
+                    .build();
+
+            ArgumentCommandNode<ServerCommandSource, String> planetDeleteNameNode = CommandManager
+                    .argument("name", StringArgumentType.string())
                     .executes(PlanetCommand::delete)
                     .build();
 
@@ -45,6 +50,7 @@ public class PlayerWorldCommandManager {
                     planetCreateNode.addChild(planetCreateNameNode);
 
                 planetNode.addChild(planetDeleteNode);
+                    planetDeleteNode.addChild(planetDeleteNameNode);
         });
     }
 }
