@@ -1,9 +1,11 @@
 package com.github.seventeen.playerworld;
 
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import xyz.nucleoid.fantasy.RuntimeWorldHandle;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -11,12 +13,13 @@ import java.util.UUID;
 
 public class PlanetManager {
 
-    public static HashMap<UUID, Planet> planets;
+    public static HashMap<UUID, Planet> planets = new HashMap<>();
 
-    //THIS IS BROKEN FIX IT RN
     public static Planet getPlanetByUUID(UUID player) {
         return planets.get(player);
     }
+
+    public static void deletePlanetByUUID(UUID player) { planets.replace(player, null); }
 
     public static void getPlanetByName() {
 
@@ -24,13 +27,16 @@ public class PlanetManager {
 
     public static class Planet {
 
-        private final List<UUID> allowedVisitors;
-        private final bool isPublic;
+        private ArrayList<UUID> allowedVisitors;
+        private Boolean isPublic;
         private final UUID creator;
         private final String name;
         private final RuntimeWorldHandle worldHandle;
+        //TODO: Add list of doubles for spawn location and getSpawn() command (maybe add spawn setting command)
 
-        public Planet(RuntimeWorldHandle worldHandle, UUID creator, String name) {
+        public Planet(UUID creator, String name) {
+
+            RuntimeWorldHandle worldHandle = FantasyInitializer.fantasy.getOrOpenPersistentWorld(new Identifier("planet", creator.toString()), FantasyInitializer.worldConfig);
             this.creator = creator;
             this.name = name;
             this.worldHandle = worldHandle;
@@ -47,7 +53,7 @@ public class PlanetManager {
 
         public ServerWorld getWorld() { return worldHandle.asWorld(); }
 
-        public void setVisibility(bool visibility) {
+        public void setVisibility(Boolean visibility) {
           this.isPublic = visibility;
         }
     }

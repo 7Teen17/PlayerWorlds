@@ -1,12 +1,16 @@
 package com.github.seventeen.playerworld.command;
 
+import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.minecraft.command.EntitySelector;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class PlayerWorldCommandManager {
     public static void createCommands() {
@@ -24,7 +28,6 @@ public class PlayerWorldCommandManager {
 
             LiteralCommandNode<ServerCommandSource> planetCreateNode = CommandManager
                     .literal("create")
-                    //.executes(PlanetCommand::create)
                     .build();
 
             ArgumentCommandNode<ServerCommandSource, String> planetCreateNameNode = CommandManager
@@ -34,12 +37,20 @@ public class PlayerWorldCommandManager {
 
             LiteralCommandNode<ServerCommandSource> planetDeleteNode = CommandManager
                     .literal("delete")
-                    //.executes(PlanetCommand::delete)
                     .build();
 
             ArgumentCommandNode<ServerCommandSource, String> planetDeleteNameNode = CommandManager
                     .argument("name", StringArgumentType.string())
                     .executes(PlanetCommand::delete)
+                    .build();
+
+            LiteralCommandNode<ServerCommandSource> planetTeleportNode = CommandManager
+                    .literal("tp")
+                    .build();
+
+            ArgumentCommandNode<ServerCommandSource, EntitySelector> planetTeleportNameNode = CommandManager
+                    .argument("player", EntityArgumentType.player())
+                    .executes(PlanetCommand::tp)
                     .build();
 
             dispatcher.getRoot().addChild(planetNode);
@@ -51,6 +62,9 @@ public class PlayerWorldCommandManager {
 
                 planetNode.addChild(planetDeleteNode);
                     planetDeleteNode.addChild(planetDeleteNameNode);
+
+                planetNode.addChild(planetTeleportNode);
+                    planetTeleportNode.addChild(planetTeleportNameNode);
         });
     }
 }
