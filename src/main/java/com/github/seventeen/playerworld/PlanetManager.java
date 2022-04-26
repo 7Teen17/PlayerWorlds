@@ -2,6 +2,7 @@ package com.github.seventeen.playerworld;
 
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import xyz.nucleoid.fantasy.RuntimeWorldHandle;
 
 import javax.annotation.Nullable;
@@ -32,7 +33,8 @@ public class PlanetManager {
         private final UUID creator;
         private final String name;
         private final RuntimeWorldHandle worldHandle;
-        //TODO: Add list of doubles for spawn location and getSpawn() command (maybe add spawn setting command)
+        private Vec3d spawnLocation;
+        //TODO: (maybe add spawn setting command)
 
         public Planet(UUID creator, String name) {
 
@@ -42,19 +44,32 @@ public class PlanetManager {
             this.worldHandle = worldHandle;
             this.isPublic = false;
             this.allowedVisitors = new ArrayList<>();
+            this.spawnLocation = new Vec3d(0, 70, 0);
             planets.put(creator, this);
         }
 
-        public UUID getCreator() { return creator; }
+        public UUID getCreator() { return this.creator; }
 
-        public String getName() { return name; }
+        public String getName() { return this.name; }
 
-        public RuntimeWorldHandle getWorldHandle() { return worldHandle; }
+        public RuntimeWorldHandle getWorldHandle() { return this.worldHandle; }
 
-        public ServerWorld getWorld() { return worldHandle.asWorld(); }
+        public ServerWorld getWorld() { return this.worldHandle.asWorld(); }
 
-        public void setVisibility(Boolean visibility) {
-          this.isPublic = visibility;
+        public Vec3d getSpawnLocation() { return this.spawnLocation; }
+
+        public void setSpawnLocation(Vec3d pos) { this.spawnLocation = pos; }
+
+        public void setPublicity(Boolean publicity) {
+          this.isPublic = publicity;
         }
+
+        public Boolean isPublic() { return this.isPublic; }
+
+        public Boolean allowedToVisit(UUID visitor) { return allowedVisitors.contains(visitor); }
+
+        public void addVisitor(UUID visitor) { allowedVisitors.add(visitor); }
+
+        public void removeVisitor(UUID visitor) { allowedVisitors.remove(visitor); }
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Vec3d;
 
 public class PlanetCommand {
 
@@ -22,12 +23,18 @@ public class PlanetCommand {
         ServerPlayerEntity player = context.getSource().getPlayer();
         //context.getSource().getPlayer().sendMessage(Text.of("start"), false);
         String name = context.getArgument("name", String.class);
+
         PlanetManager.Planet playerPlanet;
         player.sendMessage(Text.of("Creating planet with name " + name + "..."), false);
-        if (PlanetManager.getPlanetByUUID(player.getUuid()) == null) {
+
+        if (PlanetManager.getPlanetByUUID(player.getUuid()) != null) {
+            player.sendMessage(Text.of("Error: You already have a planet!"), false);
+            return 0;
+        } else {
             playerPlanet = new PlanetManager.Planet(player.getUuid(), name);
+            player.sendMessage(Text.of("Sucessfully created Planet " + name + "!"), false);
+            return 1;
         }
-        PlanetManager.Planet playerWorld = new PlanetManager.Planet(player.getUuid(), name);
 
         //TODO: FINISH REWRITING THIS!!!
 
@@ -42,9 +49,7 @@ public class PlanetCommand {
             playerWorld = PlanetManager.getPlanetByUUID(context.getSource().getPlayer().getUuid());
         }
         */
-        context.getSource().getPlayer().sendMessage(Text.of("Teleporting to world " + name + "."), false);
-        context.getSource().getPlayer().teleport(playerWorld.getWorld(), 0, 70, 0, 0, 0);
-        return 1;
+
     }
 
     public static int delete(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -63,11 +68,19 @@ public class PlanetCommand {
     }
 
     public static int tp(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ServerPlayerEntity player = context.getArgument("player", EntitySelector.class).getPlayer(context.getSource());
-        if (PlanetManager.getPlanetByUUID(player.getUuid()) != null) {
-            //TODO: Finish teleport command and get planet's spawn to tp to
-            //Add check for if player is in allowedVisitors before tping
+        ServerPlayerEntity executor = context.getSource().getPlayer();
+        ServerPlayerEntity planetOwner = context.getArgument("player", EntitySelector.class).getPlayer(context.getSource());
+        if (PlanetManager.getPlanetByUUID(planetOwner.getUuid()) == null) {
+            executor.sendMessage(Text.of("Error: Player does not have a world!"), false);
+            return 0;
         }
+        PlanetManager.Planet playerPlanet = PlanetManager.getPlanetByUUID(planetOwner.getUuid());
+        //TODO: add ispublic check here if its not public allowedvisitors can stil come
+        if (!(playerPlanet.allowedToVisit(executor.getUuid()))) {
+            executor.sendMessage(Text.of("Error: Not allowed to visit that player's world."), false);
+        }
+        Vec3d spawn = playerPlanet.getSpawnLocation();
+        executor.teleport(playerPlanet.getWorld(), spawn.x, spawn.y, spawn.z, 0, 0);
         return 1;
     }
 }
