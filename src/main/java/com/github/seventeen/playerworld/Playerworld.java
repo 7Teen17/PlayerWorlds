@@ -9,5 +9,6 @@ public class Playerworld implements ModInitializer {
     public void onInitialize() {
         ServerLifecycleEvents.SERVER_STARTED.register(new FantasyInitializer());
         PlayerWorldCommandManager.createCommands();
+        //TODO: add planet list initializer here to grab all worlds
     }
 }

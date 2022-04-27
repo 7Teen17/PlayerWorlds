@@ -4,11 +4,11 @@ import com.github.seventeen.playerworld.PlanetManager;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.EntitySelector;
-import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
+import org.apache.logging.log4j.core.jmx.Server;
 
 public class PlanetCommand {
 
@@ -53,34 +53,55 @@ public class PlanetCommand {
     }
 
     public static int delete(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        context.getSource().getPlayer().sendMessage(Text.of("Deleting planet..."), false);
+        ServerPlayerEntity player = context.getSource().getPlayer();
+        player.sendMessage(Text.of("Deleting planet..."), false);
         String name = context.getArgument("name", String.class);
         PlanetManager.Planet playerWorld = PlanetManager.getPlanetByUUID(context.getSource().getPlayer().getUuid());
         if (playerWorld == null) {
-            context.getSource().getPlayer().sendMessage(Text.of("ERROR: Couldn't find your world."), false);
+            player.sendMessage(Text.of("ERROR: Couldn't find your world."), false);
             return 0;
+
         } else {
+            player.sendMessage(Text.of("BEFORE DELETE"), false);
+
             playerWorld.getWorldHandle().delete();
+            player.sendMessage(Text.of("AFTER DELETE"), false);
             PlanetManager.deletePlanetByUUID(context.getSource().getPlayer().getUuid());
+            player.sendMessage(Text.of("AFTER DELETE BY UUID"), false);
             context.getSource().getPlayer().sendMessage(Text.of("Successfully deleted your world."), false);
+
         }
         return 1;
     }
 
     public static int tp(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+
         ServerPlayerEntity executor = context.getSource().getPlayer();
         ServerPlayerEntity planetOwner = context.getArgument("player", EntitySelector.class).getPlayer(context.getSource());
+
         if (PlanetManager.getPlanetByUUID(planetOwner.getUuid()) == null) {
+
             executor.sendMessage(Text.of("Error: Player does not have a world!"), false);
             return 0;
+
         }
         PlanetManager.Planet playerPlanet = PlanetManager.getPlanetByUUID(planetOwner.getUuid());
-        //TODO: add ispublic check here if its not public allowedvisitors can stil come
-        if (!(playerPlanet.allowedToVisit(executor.getUuid()))) {
+
+        if (playerPlanet.isPublic()) {
+
+            Vec3d spawn = playerPlanet.getSpawnLocation();
+            executor.teleport(playerPlanet.getWorld(), spawn.x, spawn.y, spawn.z, 0, 0);
+            return 1;
+
+        } else if (playerPlanet.allowedToVisit(executor.getUuid())) {
+
+            Vec3d spawn = playerPlanet.getSpawnLocation();
+            executor.teleport(playerPlanet.getWorld(), spawn.x, spawn.y, spawn.z, 0, 0);
+            return 1;
+
+        } else {
             executor.sendMessage(Text.of("Error: Not allowed to visit that player's world."), false);
+            return 0;
         }
-        Vec3d spawn = playerPlanet.getSpawnLocation();
-        executor.teleport(playerPlanet.getWorld(), spawn.x, spawn.y, spawn.z, 0, 0);
-        return 1;
     }
 }

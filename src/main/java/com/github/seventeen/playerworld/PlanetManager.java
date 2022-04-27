@@ -16,15 +16,12 @@ public class PlanetManager {
 
     public static HashMap<UUID, Planet> planets = new HashMap<>();
 
+    @Nullable
     public static Planet getPlanetByUUID(UUID player) {
         return planets.get(player);
     }
 
-    public static void deletePlanetByUUID(UUID player) { planets.replace(player, null); }
-
-    public static void getPlanetByName() {
-
-    }
+    public static void deletePlanetByUUID(UUID player) { planets.remove(player); }
 
     public static class Planet {
 
@@ -34,7 +31,6 @@ public class PlanetManager {
         private final String name;
         private final RuntimeWorldHandle worldHandle;
         private Vec3d spawnLocation;
-        //TODO: (maybe add spawn setting command)
 
         public Planet(UUID creator, String name) {
 
@@ -42,17 +38,22 @@ public class PlanetManager {
             this.creator = creator;
             this.name = name;
             this.worldHandle = worldHandle;
-            this.isPublic = false;
+            this.isPublic = true;
             this.allowedVisitors = new ArrayList<>();
             this.spawnLocation = new Vec3d(0, 70, 0);
-            planets.put(creator, this);
+            if (planets.get(creator) != null) {
+                planets.replace(creator, this);
+            } else {
+                planets.put(creator, this);
+            }
+
         }
+
+        public RuntimeWorldHandle getWorldHandle() { return this.worldHandle; }
 
         public UUID getCreator() { return this.creator; }
 
         public String getName() { return this.name; }
-
-        public RuntimeWorldHandle getWorldHandle() { return this.worldHandle; }
 
         public ServerWorld getWorld() { return this.worldHandle.asWorld(); }
 
