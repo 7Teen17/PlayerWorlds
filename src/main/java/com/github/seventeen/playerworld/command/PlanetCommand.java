@@ -1,5 +1,6 @@
 package com.github.seventeen.playerworld.command;
 
+import com.github.seventeen.playerworld.FantasyInitializer;
 import com.github.seventeen.playerworld.PlanetManager;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -7,9 +8,14 @@ import net.minecraft.command.EntitySelector;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.apache.logging.log4j.core.jmx.Server;
+import xyz.nucleoid.fantasy.RuntimeWorldHandle;
 
+import java.util.Map;
+import java.util.UUID;
+//TODO: mixin to on world join or smth with a variable if its new or not and reset the structure that way
 public class PlanetCommand {
 
     public static int help(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -35,21 +41,6 @@ public class PlanetCommand {
             player.sendMessage(Text.of("Sucessfully created Planet " + name + "!"), false);
             return 1;
         }
-
-        //TODO: FINISH REWRITING THIS!!!
-
-        /*
-        RuntimeWorldHandle worldHandle = FantasyInitializer.fantasy.getOrOpenPersistentWorld(new Identifier("planet", name), FantasyInitializer.worldConfig);
-        //context.getSource().getPlayer().sendMessage(Text.of("before uuid get"), false);
-        if (PlanetManager.getPlanetByUUID(context.getSource().getPlayer().getUuid()) == null) {
-            //context.getSource().getPlayer().sendMessage(Text.of("after"), false);
-            playerWorld = new PlanetManager.Planet(worldHandle, context.getSource().getPlayer().getUuid(), name);
-        } else {
-            //context.getSource().getPlayer().sendMessage(Text.of("after2"), false);
-            playerWorld = PlanetManager.getPlanetByUUID(context.getSource().getPlayer().getUuid());
-        }
-        */
-
     }
 
     public static int delete(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -63,8 +54,7 @@ public class PlanetCommand {
 
         } else {
             player.sendMessage(Text.of("BEFORE DELETE"), false);
-
-            playerWorld.getWorldHandle().delete();
+            //playerWorld.getWorldHandle().delete();
             player.sendMessage(Text.of("AFTER DELETE"), false);
             PlanetManager.deletePlanetByUUID(context.getSource().getPlayer().getUuid());
             player.sendMessage(Text.of("AFTER DELETE BY UUID"), false);

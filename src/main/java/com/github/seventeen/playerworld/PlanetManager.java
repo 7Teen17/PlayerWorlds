@@ -16,7 +16,6 @@ public class PlanetManager {
 
     public static HashMap<UUID, Planet> planets = new HashMap<>();
 
-    @Nullable
     public static Planet getPlanetByUUID(UUID player) {
         return planets.get(player);
     }
