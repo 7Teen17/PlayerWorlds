@@ -10,13 +10,16 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-import org.apache.logging.log4j.core.jmx.Server;
-import xyz.nucleoid.fantasy.RuntimeWorldHandle;
 
-import java.util.Map;
-import java.util.UUID;
 //TODO: mixin to on world join or smth with a variable if its new or not and reset the structure that way
 public class PlanetCommand {
+
+    public static int admindelete(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        String iden1 = context.getArgument("iden1", String.class);
+        String iden2 = context.getArgument("iden2", String.class);
+        FantasyInitializer.fantasy.getOrOpenPersistentWorld(new Identifier(iden1, iden2), FantasyInitializer.worldConfig).delete();
+        return 1;
+    }
 
     public static int help(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         context.getSource().getPlayer().sendMessage(Text.of("PLANET SYSTEM"), false);
@@ -27,7 +30,6 @@ public class PlanetCommand {
 
     public static int create(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().getPlayer();
-        //context.getSource().getPlayer().sendMessage(Text.of("start"), false);
         String name = context.getArgument("name", String.class);
 
         PlanetManager.Planet playerPlanet;
@@ -54,7 +56,7 @@ public class PlanetCommand {
 
         } else {
             player.sendMessage(Text.of("BEFORE DELETE"), false);
-            //playerWorld.getWorldHandle().delete();
+            playerWorld.getWorldHandle().delete();
             player.sendMessage(Text.of("AFTER DELETE"), false);
             PlanetManager.deletePlanetByUUID(context.getSource().getPlayer().getUuid());
             player.sendMessage(Text.of("AFTER DELETE BY UUID"), false);
@@ -63,7 +65,23 @@ public class PlanetCommand {
         }
         return 1;
     }
+    public static int info(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 
+        ServerPlayerEntity executor = context.getSource().getPlayer();
+        ServerPlayerEntity planetOwner = context.getArgument("player", EntitySelector.class).getPlayer(context.getSource());
+        PlanetManager.Planet playerPlanet = PlanetManager.getPlanetByUUID(planetOwner.getUuid());
+
+        if (playerPlanet == null) {
+            executor.sendMessage(Text.of("Error: Player does not have a world!"), false);
+            return 0;
+        }
+        executor.sendMessage(Text.of("Planet " + playerPlanet.getName()), false);
+        executor.sendMessage(Text.of(""), false);
+        executor.sendMessage(Text.of("Owner: " + planetOwner.getName().asString()), false);
+        executor.sendMessage(Text.of("Public: " + playerPlanet.isPublic().toString()), false);
+        executor.sendMessage(Text.of("Allowed to visit: " + playerPlanet.allowedToVisit(executor.getUuid()).toString()), false);
+        return 1;
+    }
     public static int tp(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 
         ServerPlayerEntity executor = context.getSource().getPlayer();
@@ -83,7 +101,7 @@ public class PlanetCommand {
             executor.teleport(playerPlanet.getWorld(), spawn.x, spawn.y, spawn.z, 0, 0);
             return 1;
 
-        } else if (playerPlanet.allowedToVisit(executor.getUuid())) {
+        } else if (playerPlanet.allowedToVisit(executor.getUuid()) || playerPlanet.getCreator().equals(executor.getUuid())) {
 
             Vec3d spawn = playerPlanet.getSpawnLocation();
             executor.teleport(playerPlanet.getWorld(), spawn.x, spawn.y, spawn.z, 0, 0);
@@ -93,5 +111,21 @@ public class PlanetCommand {
             executor.sendMessage(Text.of("Error: Not allowed to visit that player's world."), false);
             return 0;
         }
+    }
+
+    public static int setPublic(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        Boolean publicity = context.getArgument("isPublic", Boolean.class);
+        ServerPlayerEntity executor = context.getSource().getPlayer();
+        assert PlanetManager.getPlanetByUUID(executor.getUuid()) != null;
+        PlanetManager.getPlanetByUUID(executor.getUuid()).setPublicity(publicity);
+        return 1;
+    }
+
+    public static int addVisitor(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        return 1;
+    }
+
+    public static int deleteVisitor(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        return 1;
     }
 }

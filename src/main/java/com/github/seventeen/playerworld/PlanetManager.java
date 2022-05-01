@@ -65,7 +65,7 @@ public class PlanetManager {
         }
 
         public Boolean isPublic() { return this.isPublic; }
-
+        //TODO: set value of visitor to either true false or null; true = specifically allowed, false = banned, null = default to isPublic
         public Boolean allowedToVisit(UUID visitor) { return allowedVisitors.contains(visitor); }
 
         public void addVisitor(UUID visitor) { allowedVisitors.add(visitor); }
