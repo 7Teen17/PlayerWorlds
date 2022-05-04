@@ -13,6 +13,10 @@ repositories {
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
     maven { url = 'https://maven.nucleoid.xyz/' }
+    maven {
+        name = 'Ladysnake Mods'
+        url = 'https://ladysnake.jfrog.io/artifactory/mods'
+    }
 }
 
 dependencies {
@@ -24,6 +28,9 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation 'xyz.nucleoid:fantasy:0.4.5+1.18.2'
+
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:4.1.4"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-world:4.1.4"
 }
 
 processResources {

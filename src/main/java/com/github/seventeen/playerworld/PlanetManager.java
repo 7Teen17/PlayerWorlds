@@ -1,14 +1,13 @@
 package com.github.seventeen.playerworld;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import xyz.nucleoid.fantasy.RuntimeWorldHandle;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 
@@ -21,6 +20,14 @@ public class PlanetManager {
     }
 
     public static void deletePlanetByUUID(UUID player) { planets.remove(player); }
+
+    public static void initializePlanet(MinecraftServer server, UUID player) {
+        for (ServerWorld world : server.getWorlds()) {
+            if (world.getRegistryKey().getValue().getNamespace() == "planet" && world.getRegistryKey().getValue().getPath() == player.toString()) {
+//TODO: understand how cardinal components work and implement it (may require major refactor idk)
+            }
+        }
+    }
 
     public static class Planet {
 

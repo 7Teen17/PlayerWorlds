@@ -118,14 +118,23 @@ public class PlanetCommand {
         ServerPlayerEntity executor = context.getSource().getPlayer();
         assert PlanetManager.getPlanetByUUID(executor.getUuid()) != null;
         PlanetManager.getPlanetByUUID(executor.getUuid()).setPublicity(publicity);
+        executor.sendMessage(Text.of("Successfully set Planet publicity to " + publicity.toString() + "."), false);
         return 1;
     }
 
     public static int addVisitor(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerPlayerEntity addedPlayer = context.getArgument("player", EntitySelector.class).getPlayer(context.getSource());
+        ServerPlayerEntity executor = context.getSource().getPlayer();
+        PlanetManager.getPlanetByUUID(executor.getUuid()).addVisitor(addedPlayer.getUuid());
+        executor.sendMessage(Text.of("Successfully added " + addedPlayer.getName().asString() + " as a visitor."), false);
         return 1;
     }
 
     public static int deleteVisitor(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerPlayerEntity addedPlayer = context.getArgument("player", EntitySelector.class).getPlayer(context.getSource());
+        ServerPlayerEntity executor = context.getSource().getPlayer();
+        PlanetManager.getPlanetByUUID(executor.getUuid()).removeVisitor(addedPlayer.getUuid());
+        executor.sendMessage(Text.of("Successfully removed " + addedPlayer.getName().asString() + " as a visitor."), false);
         return 1;
     }
 }
