@@ -1,4 +1,4 @@
-package com.github.seventeen.playerworld.cca;
+package com.github.seventeen.playerworld.cca.generic;
 
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 

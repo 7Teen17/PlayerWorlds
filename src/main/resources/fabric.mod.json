@@ -19,6 +19,9 @@
     ],
     "main": [
       "com.github.seventeen.playerworld.Playerworld"
+    ],
+    "cardinal-components": [
+      "com.github.seventeen.playerworld.cca.ComponentRegistrar"
     ]
   },
   "mixins": [
@@ -31,7 +34,10 @@
   },
   "custom": {
     "cardinal-components": [
-      "playerworld:name"
+      "playerworld:name",
+      "playerworld:ispublic",
+      "playerworld:creator",
+      "playerworld:spawn"
     ]
   }
 }

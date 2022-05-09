@@ -5,6 +5,7 @@ import com.github.seventeen.playerworld.PlanetManager;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.EntitySelector;
+import net.minecraft.server.ServerTask;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -79,6 +80,7 @@ public class PlanetCommand {
         executor.sendMessage(Text.of(""), false);
         executor.sendMessage(Text.of("Owner: " + planetOwner.getName().asString()), false);
         executor.sendMessage(Text.of("Public: " + playerPlanet.isPublic().toString()), false);
+        //TODO: change to status: and add BANNED, allowed, public instead of true false null
         executor.sendMessage(Text.of("Allowed to visit: " + playerPlanet.allowedToVisit(executor.getUuid()).toString()), false);
         return 1;
     }
